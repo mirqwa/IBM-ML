@@ -1,7 +1,11 @@
+import warnings
+
 import pandas as pd
 import seaborn as sn
 import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPClassifier
+
+warnings.filterwarnings("ignore")
 
 
 def plot_correlation_matrix(df: pd.DataFrame) -> None:
@@ -40,6 +44,12 @@ def pre_process_data(df: pd.DataFrame) -> None:
     convert_categorical_to_numerical(df)
 
 
+def get_columns_to_use_in_training(df: pd.DataFrame) -> list:
+    corr_df = df.corr()
+    survided_corr = corr_df["Survived"]
+    return survided_corr[survided_corr.abs() > 0.01].keys().tolist()
+
+
 train_data = pd.read_csv("data/titanic/train.csv")
 test_data = pd.read_csv("data/titanic/test.csv")
 
@@ -57,6 +67,10 @@ print("Data exploration after pre-processing")
 explore_data(train_data)
 explore_data(test_data)
 plot_correlation_matrix(train_data)
+
+# Training the model
+columns_to_use_in_training = get_columns_to_use_in_training(train_data)
+train_data = train_data[columns_to_use_in_training]
 
 
 mlp = MLPClassifier(hidden_layer_sizes=(5, 2), activation="logistic")
