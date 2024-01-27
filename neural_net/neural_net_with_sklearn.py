@@ -59,7 +59,7 @@ test_data = pd.read_csv("data/titanic/test.csv")
 # Data exploration before preprocessing
 explore_data(train_data)
 explore_data(test_data)
-plot_correlation_matrix(train_data)
+#plot_correlation_matrix(train_data)
 
 # Data preprocessing
 pre_process_data(train_data)
@@ -69,9 +69,9 @@ pre_process_data(test_data)
 print("Data exploration after pre-processing")
 explore_data(train_data)
 explore_data(test_data)
-plot_correlation_matrix(train_data)
+#plot_correlation_matrix(train_data)
 
-# Training the model
+# Splitting the training and the test data
 training_columns = get_columns_to_use_in_training(train_data)
 X_train, X_test, y_train, y_test = train_test_split(
     train_data[training_columns],
@@ -80,4 +80,9 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42,
 )
 
-mlp = MLPClassifier(hidden_layer_sizes=(5, 2), activation="logistic")
+# trainin the model
+clf = MLPClassifier(hidden_layer_sizes=(5, 2), random_state=1, max_iter=300)
+clf.fit(X_train, y_train)
+
+score = clf.score(X_test, y_test)
+print(score)
