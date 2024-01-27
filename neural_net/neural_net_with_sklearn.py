@@ -5,6 +5,7 @@ import seaborn as sn
 import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 
 warnings.filterwarnings("ignore")
 
@@ -53,6 +54,11 @@ def get_columns_to_use_in_training(df: pd.DataFrame) -> list:
     return training_columns
 
 
+def scale_values(df: pd.DataFrame) -> pd.DataFrame:
+    scaler = MinMaxScaler()
+    return pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+
+
 train_data = pd.read_csv("data/titanic/train.csv")
 test_data = pd.read_csv("data/titanic/test.csv")
 
@@ -76,9 +82,12 @@ training_columns = get_columns_to_use_in_training(train_data)
 X_train, X_test, y_train, y_test = train_test_split(
     train_data[training_columns],
     train_data["Survived"],
-    test_size=0.33,
+    test_size=0.3,
     random_state=42,
 )
+
+X_train = scale_values(X_train)
+X_test = scale_values(X_test)
 
 # trainin the model
 clf = MLPClassifier(hidden_layer_sizes=(5, 2), random_state=1, max_iter=300)
